@@ -1,5 +1,6 @@
 class ArticlesController < ApplicationController
   before_action :set_article, only: %i[ show update destroy ]
+  before_action :authenticate_user, only: [:show, :create, :update, :new, :destroy, :edit]
 
   # GET /articles
   def index
@@ -16,7 +17,7 @@ class ArticlesController < ApplicationController
   # POST /articles
   def create
     @article = Article.new(article_params)
-    @users = User.all
+    @article.user = logged_in_user
 
     if @article.save
       render json: @article, status: :created, location: @article
@@ -36,7 +37,7 @@ class ArticlesController < ApplicationController
 
   # DELETE /articles/1
   def destroy
-    @article.destroy
+    authenticate_user ? @article.destroy : (render json: {error: 'access denied'}, status: 401)
   end
 
   private
@@ -48,5 +49,11 @@ class ArticlesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def article_params
       params.require(:article).permit(:title, :content)
+    end
+
+    def authenticate_user
+      unless logged_in_user
+        retrurn true
+      end
     end
 end
