@@ -1,6 +1,6 @@
 require 'faker'
 
-user = User.create(username: "reizl", password: "sample", age: 27)
+
 
 10.times do 
   article = Article.create!(
