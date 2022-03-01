@@ -1,7 +1,7 @@
 class ArticlesController < ApplicationController
   before_action :set_article, only: %i[ show update destroy ]
   before_action :authenticate_user, only: [:show, :create, :new, :destroy]
-  before_action :authenticate_user_edit, only:[:update, :edit]
+  before_action :authenticate_user_edit, only:[:update, :edit, :destroy]
 
   # GET /articles
   def index
@@ -38,7 +38,8 @@ class ArticlesController < ApplicationController
 
   # DELETE /articles/1
   def destroy
-    authenticate_user ? @article.destroy : (render json: {error: 'access denied'}, status: 401)
+   
+     authenticate_user ? (render json: {error: 'access denied'}, status: 401) : @article.destroy
   end
 
   private
@@ -54,7 +55,7 @@ class ArticlesController < ApplicationController
 
     def authenticate_user
       unless logged_in_user
-        retrurn true
+        return true
       end
     end
 end
